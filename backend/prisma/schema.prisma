@@ -1,0 +1,115 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String   
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+
+  posts     Post[]
+  comments  Comment[]
+  likes     Like[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Post {
+  id          Int       @id @default(autoincrement())
+  title       String
+  slug        String    @unique
+  content     String    @db.Text
+  excerpt     String?
+  status      PostStatus @default(DRAFT)
+  view_count  Int       @default(0)
+
+  user_id     Int
+  user        User      @relation(fields: [user_id], references: [id])
+
+  category_id Int?
+  category    Category? @relation(fields: [category_id], references: [id])
+
+  comments    Comment[]
+  tags        PostTag[]
+  likes       Like[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String  @db.Text
+
+  post_id   Int
+  post      Post    @relation(fields: [post_id], references: [id])
+
+  user_id   Int
+  user      User    @relation(fields: [user_id], references: [id])
+
+  parent_id Int?
+  parent    Comment? @relation("CommentParent", fields: [parent_id], references: [id])
+  replies   Comment[] @relation("CommentParent")
+
+  createdAt DateTime @default(now())
+}
+
+model Tag {
+  id    Int    @id @default(autoincrement())
+  name  String
+  slug  String @unique
+
+  posts PostTag[]
+}
+
+model PostTag {
+  post_id Int
+  tag_id  Int
+
+  post Post @relation(fields: [post_id], references: [id])
+  tag  Tag  @relation(fields: [tag_id], references: [id])
+
+  @@id([post_id, tag_id])
+}
+
+model Like {
+  user_id Int
+  post_id Int
+
+  user User @relation(fields: [user_id], references: [id])
+  post Post @relation(fields: [post_id], references: [id])
+
+  @@id([user_id, post_id])
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String
+  slug  String @unique
+
+  posts Post[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
