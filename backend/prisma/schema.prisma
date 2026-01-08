@@ -22,6 +22,7 @@ model User {
   posts     Post[]
   comments  Comment[]
   likes     Like[]
+  refreshTokens RefreshToken[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -103,6 +104,15 @@ model Category {
   posts Post[]
 }
 
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  user_id   Int
+  user      User     @relation(fields: [user_id], references: [id])
+  revoked   Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
 enum Role {
   USER
   ADMIN
