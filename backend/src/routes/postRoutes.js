@@ -1,12 +1,13 @@
 import express from "express";
 import { createPost, deletePost, getPost, getPostById, updatePost } from "../controllers/postControllers";
+import { verifyAccesssToken } from "../middleware/verifyAccessToken";
 
 const router = express.Router();
 
-router.get("/", getPost);
-router.post("/", createPost);
-router.get("/:slug", getPostById);
-router.put("/:id", updatePost);
-router.delete("/:id", deletePost);
+router.get("/", verifyAccesssToken, getPost);
+router.post("/", verifyAccesssToken, createPost);
+router.get("/:slug", verifyAccesssToken, getPostById);
+router.put("/:id", verifyAccesssToken, updatePost);
+router.delete("/:id", verifyAccesssToken, deletePost);
 
 export default router
