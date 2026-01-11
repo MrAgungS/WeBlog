@@ -9,10 +9,11 @@ import authRoutes from './routes/authRoutes.js';
 // import tagRoutes from './routes/tagRoutes.js';
 
 loadEnv();
-
-
 const app = express();
 const PORT = process.env.PORT;
+
+app.use(express.json());
+app.use(cookieParser()); 
 
 app.use("/api/auth", authRoutes);
 // app.use("/api/posts", postRoutes);
@@ -20,9 +21,10 @@ app.use("/api/auth", authRoutes);
 // app.use("/api/tag", tagRoutes);
 // app.use("/api/categories", categoriesRoutes);
 
-app.use(express.json());
-app.use(cookieParser()); 
+if (process.env.NODE_ENV !== "test") {
+  app.listen(PORT, () => {
+    console.log(`Started at http://localhost:${PORT}`);
+  });
+}
 
-app.listen(PORT, () =>{
-    console.log(`Started to localhost:${PORT}`);
-});
+export default app;
