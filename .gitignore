@@ -5,7 +5,7 @@
 **/.env
 **/.env.*
 !.env.example
-docker-compose.yml
+docker-compose.yaml
 
 # Build output
 **/.next/

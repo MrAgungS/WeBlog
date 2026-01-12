@@ -1,0 +1,51 @@
+services:
+  redis:
+    image: redis:8.0-alpine3.21
+    container_name: redis_WeBlog
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_WeBlog
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD : ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE : ${MYSQL_USER}
+      MYSQL_USER: ${MYSQL_PASSWORD}
+      MYSQL_PASSWORD : ${MYSQL_DATABASE}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-ufordocker", "-pagungdocker"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  backend:
+    build: ./backend
+    container_name: weblog_api
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./backend/.env.docker
+    depends_on:
+      redis:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+    command: sh -c "npx prisma migrate deploy && pnpm run dev"
+  frontend:
+    build: ./frontend
+    container_name: weblod__ui
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+volumes:
+  mysql_data:
