@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken"
-import { loadEnv } from "../config/env"
-import response from "../res/responses";
+import { loadEnv } from "../config/env.js"
+import response from "../res/responses.js";
 
-loadEnv()
+loadEnv();
 export const verifyAccesssToken = (req,res,next) =>{
     const auth = req.headers.authorization;
     if(!auth) return response(401, "Unauthorized auth verify", null, res);
@@ -11,5 +11,5 @@ export const verifyAccesssToken = (req,res,next) =>{
         if(err) return response(403,"Forbidden verify");
         req.user = decoded;
         next();
-    })
-}
+    });
+};
