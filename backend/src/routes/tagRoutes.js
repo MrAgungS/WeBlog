@@ -1,9 +1,10 @@
 import express from "express"
-import { getTag } from "../controllers/tagControllers";
-import { verifyAccesssToken } from "../middleware/verifyAccessToken";
+import { getTag } from "../controllers/tagControllers.js";
+import { verifyAccesssToken } from "../middleware/verifyAccessToken.js";
+import { apiRateLimitMiddleware } from "../middleware/rateLimitMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", verifyAccesssToken, getTag);
+router.get("/", verifyAccesssToken, apiRateLimitMiddleware, getTag);
 
 export default router
