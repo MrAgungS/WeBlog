@@ -23,13 +23,13 @@ export const createPost = async (req, res) => {
         return response(error.status || 500, error.massage || "Server Create Error", null, res);
     }
 }
-export const getPostById = async (req, res) => {
+export const getPostBySLug = async (req, res) => {
     try {
         const getById = await getPostByIdService(req.params.id);
         return response(200,"Success get post by id", getById, res);
     } catch (error) {
         console.error("Get post by id Error: ");
-        return response(500, "Server get post by id error ", null, res);
+        return response(error.status || 500, error.massage || "Server get post by id error ", null, res);
     }
 }
 export const updatePost = async (req, res) => {
@@ -38,7 +38,7 @@ export const updatePost = async (req, res) => {
         return response(200, "Success update Post", PostUpdate, res)
     } catch (error) {
         console.error("Update Post Error: ");
-        return response(500, "Server Update post error", null, res)
+        return response(error.status || 500, error.massage ||"Server Update post error", null, res)
     }
 }
 export const deletePost = async (req, res) => {
@@ -47,6 +47,6 @@ export const deletePost = async (req, res) => {
         return response(200, "Success delete post", postDelete, res);
     } catch (error) {
         console.error("Delete Post Error");
-        return response(500, "Server delete post error", null, res)
+        return response(error.status || 500, error.massage ||"Server delete post error", null, res)
     }
 }
