@@ -10,5 +10,5 @@ router.post("/", verifyAccesssToken, apiRateLimitMiddleware, createPost);
 router.get("/:slug", verifyAccesssToken, apiRateLimitMiddleware, getPostById);
 router.put("/:id", verifyAccesssToken, apiRateLimitMiddleware, updatePost);
 router.delete("/:id", verifyAccesssToken, apiRateLimitMiddleware, deletePost);
-
+ 
 export default router

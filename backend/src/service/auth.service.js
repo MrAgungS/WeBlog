@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import prisma from '../lib/prisma.js';
 import { registerValidation } from '../validations/auth.validation.js';
 import { generateAccessToken, generateRefreshToken, hashToken } from '../utils/jwt.js';
+import { AppError } from '../errors/AppError.js';
 
 export const registerService = async ({name, email, password}) => {
     // Check Validation
@@ -10,10 +11,7 @@ export const registerService = async ({name, email, password}) => {
         where: { email }
     });
     if (existingUser) {
-        throw {
-            status : 409,
-            massage :"Email has been registered"
-        }
+        throw new AppError("Email has been registered", 409);
     };
     const hash = await bcrypt.hash(password, 9);
     // create user
@@ -28,8 +26,6 @@ export const registerService = async ({name, email, password}) => {
             role:true,
         }
     })
-    
-
     return user;
 }
 
@@ -37,18 +33,12 @@ export const loginService = async ({email, password}) => {
     // Cheack Email
     const user = await prisma.user.findUnique({ where : {email} });
     if (!user) {
-        throw{
-            status : 401,
-            massage : "Cannot find the Email"
-        }
+        throw new AppError("Cannot find the Email", 401);
     };
     // Check Password
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
-        throw {
-            status : 401,
-            massage : "Wrong Password"
-        }
+        throw new AppError("Wrong Password", 401);
     };
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken();
@@ -68,10 +58,7 @@ export const loginService = async ({email, password}) => {
 
 export const refreshService = async (refreshToken) => {
     if (!refreshToken) {
-        throw {
-            status : 401,
-            massage : "Unauthorized refresh"
-        };
+        throw new AppError("Unauthorized refresh", 401);
     }
     const tokenHash = hashToken(refreshToken);
     // Find stored refresh token
@@ -87,10 +74,7 @@ export const refreshService = async (refreshToken) => {
             where : {revoked: false},
             data : {revoked: true}
         });
-        throw {
-            status: 403,
-            massage: "Forbidden reused"
-        }
+        throw new AppError("Forbidden reused", 403);
     };
     // revoke old token
     await prisma.refreshToken.update({

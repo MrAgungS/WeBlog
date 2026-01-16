@@ -7,10 +7,9 @@ export const register = async (req, res) => {
         return response(201,"Registration successful",user,res);
     } catch (error) {
         console.error("Register Error : ",error);
-        return response(error.status || 500, error.massage || "Register Error", null, res)
-    }
-}
-
+        return response(error.status || 500, error.massage || "Server Register Error", null, res)
+    };
+};
 export const login = async (req, res) => {
     try {
         const {accessToken, refreshToken } = await loginService(req.body)
@@ -22,10 +21,10 @@ export const login = async (req, res) => {
         })
         return res.json({ accessToken })
     } catch (error) {
-        console.error("Login Error : ",error);
-        return response(error.status || 500, error.massage || "Login Error", null, res)
-    }
-}
+        console.error("Login Error : ");
+        return response(error.status || 500, error.massage || "Server Login Error", null, res)
+    };
+};
 export const refresh = async (req, res) => {
     try {
         const { refreshToken } = req.cookies;
@@ -38,10 +37,10 @@ export const refresh = async (req, res) => {
         })
         return res.json({accessToken})
     } catch (error) {
-        console.error("Refresh Error : ",error);
-        return response(error.status || 500, error.massage || "Refresh server Error", null, res)
-    }
-}
+        console.error("Refresh Error : ");
+        return response(error.status || 500, error.massage || "Server Refresh server Error", null, res)
+    };
+};
 export const logout = async (req, res) => {
     try {
         const { refreshToken } = req.cookies;
@@ -53,7 +52,7 @@ export const logout = async (req, res) => {
         });
         return response(200, "Logout Success", null, res)
     } catch (error) {
-        console.error("Logout Error : ",error);
-        return response(500,"Logout server Error", null, res)        
-    }
-}
+        console.error("Logout Error : ");
+        return response(500,"Server Logout Error", null, res)        
+    };
+};
