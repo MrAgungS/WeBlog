@@ -15,15 +15,15 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD : ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE : ${MYSQL_USER}
-      MYSQL_USER: ${MYSQL_PASSWORD}
-      MYSQL_PASSWORD : ${MYSQL_DATABASE}
+      MYSQL_DATABASE : ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD : ${MYSQL_PASSWORD}  
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-ufordocker", "-pagungdocker"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u{MYSQL_USER}", "-p{MYSQL_PASSWORD}"]
       interval: 5s
       timeout: 5s
       retries: 10
