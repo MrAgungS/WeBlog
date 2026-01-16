@@ -1,9 +1,9 @@
 import { error } from 'node:console';
 import slugify from 'slugify';
 
-const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export const generateSlug = (title) =>{
+    const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
     const slug = slugify(title, {
         lower: true,
         strict:true,
