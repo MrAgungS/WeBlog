@@ -6,8 +6,8 @@ export const register = async (req, res) => {
         const user = await registerService(req.body);
         return response(201,"Registration successful",user,res);
     } catch (error) {
-        console.error("Register Error : ",error);
-        return response(error.status || 500, error.massage || "Server Register Error", null, res)
+        console.error("Register Error : ", error);
+        return response(error.status || 500, error.massage || "Server Register Error", error, res)
     };
 };
 export const login = async (req, res) => {
@@ -21,25 +21,34 @@ export const login = async (req, res) => {
         })
         return res.json({ accessToken })
     } catch (error) {
-        console.error("Login Error : ");
-        return response(error.status || 500, error.massage || "Server Login Error", null, res)
+        console.error("Login Error : ", error);
+        return response(error.status || 500, error.massage || "Server Login Error", error, res)
     };
 };
 export const refresh = async (req, res) => {
-    try {
-        const { refreshToken } = req.cookies;
-        const { accessToken, refreshToken: newRefresh} = await refreshService(refreshToken);
-        res.cookie("refreshToken", newRefresh, {
-            httpOnly: true,
-            secure : true,
-            sameSite : "strict",
-            maxAge: 7 * 86400000,
-        })
-        return res.json({accessToken})
-    } catch (error) {
-        console.error("Refresh Error : ");
-        return response(error.status || 500, error.massage || "Server Refresh server Error", null, res)
-    };
+  try {
+    const { refreshToken } = req.cookies;
+    const { newAccess, newRefresh } =await refreshService(refreshToken);
+    res.cookie("refreshToken", newRefresh, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 86400000,
+    });
+
+    return res.status(200).json({
+      success: true,
+      accessToken: newAccess,
+    });
+  } catch (error) {
+    console.error("Refresh Error:", error);
+    return response(
+      error.status || 500,
+      error.message || "Server Refresh Error",
+      error,
+      res
+    );
+  }
 };
 export const logout = async (req, res) => {
     try {
@@ -50,9 +59,9 @@ export const logout = async (req, res) => {
             secure : true,
             sameSite : "strict",            
         });
-        return response(200, "Logout Success", null, res)
+        return response(200, "Logout Success", error, res)
     } catch (error) {
-        console.error("Logout Error : ");
-        return response(500,"Server Logout Error", null, res)        
+        console.error("Logout Error : " , error);
+        return response(500,"Server Logout Error", error, res)        
     };
 };

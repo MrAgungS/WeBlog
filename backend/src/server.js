@@ -7,6 +7,7 @@ import postRoutes from './routes/postRoutes.js';
 import categoriesRoutes from './routes/categoriesRoutes.js';
 import commentsRoutes from './routes/commentsRoutes.js';
 import tagRoutes from './routes/tagRoutes.js';
+import likeRoutes from './routes/likeRoutes.js'
 
 loadEnv();
 const app = express();
@@ -19,9 +20,10 @@ app.use(cors({
 
 app.use(express.json());
 app.use(cookieParser()); 
+app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", authRoutes);
-app.use("/api/posts", postRoutes);
+app.use("/api/posts", postRoutes, likeRoutes);
 app.use("/api/comments", commentsRoutes);
 app.use("/api/tag", tagRoutes);
 app.use("/api/categories", categoriesRoutes);
