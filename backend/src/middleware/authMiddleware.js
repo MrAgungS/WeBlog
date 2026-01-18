@@ -1,24 +1,26 @@
 import jwt from "jsonwebtoken";
-import { loadEnv } from "../config/env.js";
 import response from "../res/responses.js";
+import { loadEnv } from "../config/env.js";
 
 loadEnv();
-
-export const authMiddlewere = (req, res, next) =>{
-    const auth = req.headers.authorization;
-    if(!auth) return response(401,"Check Auth", null, res)
-    const token = auth.split(" ")[1];
+export const authMiddlewere = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith("Bearer ")) {
+        return response(401, "Unauthorized", null, res);
+    }
+    const token = authHeader.split(" ")[1];
     try {
         const payload = jwt.verify(
-            token,
-            process.env.JWT_SECRET,
+        token,
+        process.env.JWT_SECRET
         );
-        req.user.id = {
-            id:payload.sub,
-            role:payload.role,
+        req.user = {
+        id: payload.sub,
+        role: payload.role
         };
         next();
-    } catch (error) {
-        return response(401,"Check Auth", null, res)
+    } catch (err) {
+        console.error("JWT ERROR:", err.name, err.message);
+        return response(401, "Invalid or expired token", null, res);
     }
-}
+    };

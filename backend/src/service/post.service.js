@@ -3,21 +3,30 @@ import prisma from '../lib/prisma.js';
 import { generateSlug } from '../utils/slug.js';
 
 export const getPostService = async ( slug ) => {
+    if (!slug) {
+        throw new AppError("Slug is reqiured", 400)
+    }
     // Find post by slug
-    const getSlug = await prisma.post.findUnique({
-        where: { slug },
+    const post = await prisma.post.findFirst({
+        where: { 
+            slug,
+            status: { not: "ARCHIVED"}
+         },
         select: { id:true }
     });
     // Handle post not found
-    if (!getSlug) {
+    if (!post) {
         throw new AppError("Post not Found", 404);
     };
-    return getSlug;
+    return post;
 }
-export const createPostService = async (title, content) => {
+export const createPostService = async (title, content, userId) => {
     // Check title && content
     if (!title || !content) {
         throw new AppError("Title and content are required", 400)
+    }
+    if (!userId) {
+        throw new AppError("Unauthorized", 401);
     }
     // Generate initial slug from the title
     const baseSlug = generateSlug(title);
@@ -44,6 +53,7 @@ export const createPostService = async (title, content) => {
             content, 
             slug,
             excerpt,
+            user_id: userId,
         },
         select:{
             id:true,
@@ -56,21 +66,26 @@ export const createPostService = async (title, content) => {
     return post;
 }
 export const getPostByIdService = async (id) => {
+    if (!id) {
+        throw new AppError("Post id is reqiured", 400)
+    }
     //Find post find id
-    const getId = await prisma.post.findUnique({
-        where: { id },
-        select: { id:true }
+    const post = await prisma.post.findFirst({
+        where: { 
+            id, 
+            status: { not:"ARCHIVED" }
+        },
     });
     //Handle get id not found
-    if (!getId) {
+    if (!post) {
         throw new AppError("Post id not found", 404)
     };
-    return getId
+    return post
 }
 export const updatePostService = async (id, title, content) => {
     //Check by id
     if (!id) {
-        throw new AppError("Post id not found", 404);
+        throw new AppError("Post id not found", 400);
     }
     //get existing post
     const existingPost = await prisma.post.findUnique({
@@ -79,15 +94,16 @@ export const updatePostService = async (id, title, content) => {
             title: true,
             slug: true,
             content: true,
+            status: true,
         },
     });
     //check existing post
-    if (!existingPost) {
+    if (!existingPost || existingPost.status === "ARCHIVED") {
         throw new AppError("Post not found", 404);
     }
     let slug = existingPost.slug;
     // regenerate slug only if title change
-    if (!title && title !== existingPost.title) {
+    if (title && title !== existingPost.title) {
         // Generate initial slug from the title
         const baseSlug = generateSlug(title);
         let newSlug = baseSlug;
@@ -101,8 +117,7 @@ export const updatePostService = async (id, title, content) => {
 
             if(!exist) break;
 
-            slug=`${baseSlug}-${counter}`;
-            counter++;
+            slug=`${baseSlug}-${counter++}`;
         };
         slug = newSlug;
     }

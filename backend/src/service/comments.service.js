@@ -1,9 +1,9 @@
 import { AppError } from '../errors/AppError.js';
 import prisma from '../lib/prisma.js';
 
-export const createCommentsService = async (postId, userId, content, parentId) => {
+export const createCommentsService = async ({ postId, userId, content, parentId }) => {
     // check
-    if (!postId || !userId || content) {
+    if (!postId || !userId || !content) {
         throw new AppError("Invalid Data", 400);
     };
     return prisma.comment.create({

@@ -17,7 +17,7 @@ export const registerService = async ({name, email, password}) => {
     // create user
     const user = await prisma.user.create({
         data:{
-            name,email, password: hash, updatedAt: new Date()
+            name,email, password: hash,
         },
         select:{
             id:true,
@@ -25,10 +25,26 @@ export const registerService = async ({name, email, password}) => {
             email:true,
             role:true,
         }
-    })
-    return user;
-}
-
+    });
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken();
+        await prisma.refreshToken.create({
+        data:{
+            token: hashToken(refreshToken),
+            user_id: user.id,
+            expiresAt: new Date(Date.now() + 7 * 86400000)
+        }
+    });
+    return{
+        user:{
+            id: user.id,
+            name: user.name,
+            email: user.email
+        },
+        accessToken,
+        refreshToken
+    };
+};
 export const loginService = async ({email, password}) => {
     // Cheack Email
     const user = await prisma.user.findUnique({ where : {email} });
@@ -53,9 +69,8 @@ export const loginService = async ({email, password}) => {
     return{
         accessToken,
         refreshToken
-    }
-}
-
+    };
+};
 export const refreshService = async (refreshToken) => {
     if (!refreshToken) {
         throw new AppError("Unauthorized refresh", 401);
@@ -65,17 +80,23 @@ export const refreshService = async (refreshToken) => {
     const stored =await prisma.refreshToken.findFirst({
         where : {
             token : tokenHash,
-            revoked : false
+            revoked : false,
         }
     });
     //reused detection
     if (!stored) {
         await prisma.refreshToken.updateMany({
-            where : {revoked: false},
+            where : {
+                user_id: stored.user_id,
+                revoked: false
+            },
             data : {revoked: true}
         });
         throw new AppError("Forbidden reused", 403);
     };
+    if (stored.expiresAt < new Date()) {
+        throw new AppError("Refresh token expired", 401);
+    }
     // revoke old token
     await prisma.refreshToken.update({
         where : {id: stored.id},
@@ -85,6 +106,7 @@ export const refreshService = async (refreshToken) => {
     const user = await prisma.user.findUnique({
         where : {id : stored.user_id}
     });
+    if (!user) throw new AppError("User not found", 401);
     const newAccessToken = generateAccessToken(user);
     const newRefreshToken = generateRefreshToken();
     await prisma.refreshToken.create({
@@ -94,17 +116,15 @@ export const refreshService = async (refreshToken) => {
             expiresAt: new Date(Date.now() + 7 *  86400000)
         }
     });
-
     return {
         newAccess : newAccessToken,
         newRefresh : newRefreshToken
-    }
-}
-
+    };
+};
 export const logoutService = async(refreshToken) =>{
     if (!refreshToken) {
         return;
-    }
+    };
     await prisma.refreshToken.updateMany({
         where : {
             token:hashToken(refreshToken),
@@ -113,5 +133,5 @@ export const logoutService = async(refreshToken) =>{
         data: {
             revoked: true
         }
-    })
-}
+    });
+};

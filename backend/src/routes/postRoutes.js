@@ -5,10 +5,10 @@ import { apiRateLimitMiddleware } from "../middleware/rateLimitMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", verifyAccesssToken, apiRateLimitMiddleware, getPost);
-router.post("/", verifyAccesssToken, apiRateLimitMiddleware, createPost);
-router.get("/:slug", verifyAccesssToken, apiRateLimitMiddleware, getPostBySLug);
-router.put("/:id", verifyAccesssToken, apiRateLimitMiddleware, updatePost);
-router.delete("/:id", verifyAccesssToken, apiRateLimitMiddleware, deletePost);
+router.get("/id/:id", verifyAccesssToken, apiRateLimitMiddleware, getPost);
+router.post("/create/", verifyAccesssToken, apiRateLimitMiddleware, createPost);
+router.get("/slug/:slug", verifyAccesssToken, apiRateLimitMiddleware, getPostBySLug);
+router.put("/update/:id", verifyAccesssToken, apiRateLimitMiddleware, updatePost);
+router.delete("/delete/:id", verifyAccesssToken, apiRateLimitMiddleware, deletePost);
  
 export default router
