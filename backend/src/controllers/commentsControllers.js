@@ -3,7 +3,8 @@ import { createCommentsService, deleteCommentsService, getCommentsService } from
 
 export const createComments = async (req, res) => {
     try {
-        const {postId, content, parentId} = req.body;
+        const postId = Number(req.params.postId);
+        const { content, parentId } = req.body;
         const userId = req.user.id;
         const comment = await createCommentsService({
             postId, userId, content, parentId

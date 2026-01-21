@@ -23,10 +23,9 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", authRoutes);
-app.use("/api/posts", postRoutes, likeRoutes);
-app.use("/api/comments", commentsRoutes);
-app.use("/api/tag", tagRoutes);
+app.use("/api/posts", postRoutes, likeRoutes, commentsRoutes);
 app.use("/api/categories", categoriesRoutes);
+app.use("/api/tag", tagRoutes);
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => {
