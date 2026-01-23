@@ -8,19 +8,16 @@ export default function NavBar() {
                 <nav className="flex h-16 items-center justify-between lg:h-20">
                     <div className="flex items-center gap-10">
                         <div className="shrink-0">
-                            <Link href="#" title="" className="flex items-center text-xl">
+                            <Link href="/" title="" className="flex items-center text-xl">
                                 <span className="font-bold dark:text-white">We</span>
                                 <span className="font-bold text-lime-600 dark:text-lime-500">Blog</span>
                                 {/* <span className="ml-1 rounded-lg border-2 border-lime-600 px-1 text-base font-medium text-lime-600 dark:border-lime-500 dark:text-lime-500">2.0</span> */}
                             </Link>
-                            
                         </div>
-
                         <div className="mx-auto hidden lg:flex lg:items-center lg:space-x-10">
-                            <Link href="#" title="" className="text-base font-medium text-black transition-all duration-200 hover:text-lime-600 focus:text-lime-600 dark:text-white dark:hover:text-lime-500 dark:focus:text-lime-500"> Features </Link>
-                            <Link href="#" title="" className="text-base font-medium text-black transition-all duration-200 hover:text-lime-600 focus:text-lime-600 dark:text-white dark:hover:text-lime-500 dark:focus:text-lime-500"> Solutions </Link>
-                            <Link href="#" title="" className="text-base font-medium text-black transition-all duration-200 hover:text-lime-600 focus:text-lime-600 dark:text-white dark:hover:text-lime-500 dark:focus:text-lime-500"> Resources </Link>
-                            <Link href="#" title="" className="text-base font-medium text-black transition-all duration-200 hover:text-lime-600 focus:text-lime-600 dark:text-white dark:hover:text-lime-500 dark:focus:text-lime-500"> Pricing  </Link>
+                            <Link href="/" title="" className="text-base font-medium text-black transition-all duration-200 hover:text-lime-600 focus:text-lime-600 dark:text-white dark:hover:text-lime-500 dark:focus:text-lime-500"> Home </Link>
+                            <Link href="/dashboard" title="" className="text-base font-medium text-black transition-all duration-200 hover:text-lime-600 focus:text-lime-600 dark:text-white dark:hover:text-lime-500 dark:focus:text-lime-500"> Explore </Link>
+                            <Link href="/about" title="" className="text-base font-medium text-black transition-all duration-200 hover:text-lime-600 focus:text-lime-600 dark:text-white dark:hover:text-lime-500 dark:focus:text-lime-500"> About </Link>
                         </div>
                     </div>
 

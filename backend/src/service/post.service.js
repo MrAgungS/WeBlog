@@ -20,6 +20,26 @@ export const getPostService = async ( slug ) => {
     };
     return post;
 }
+export const FindAllPosts = async () =>{
+    return prisma.post.findMany({
+        orderBy:{ createdAt:"desc"},
+        include:{
+            category:{
+                select:{
+                    name:true,
+                    slug:true
+                }
+            },
+            tags:{
+                select:{
+                    id:true,
+                    name:true,
+                    slug:true
+                }
+            }
+        }
+    })
+}
 export const createPostService = async (title, content, userId) => {
     // Check title && content
     if (!title || !content) {

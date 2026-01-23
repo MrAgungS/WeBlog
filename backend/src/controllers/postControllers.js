@@ -1,5 +1,5 @@
 import response from '../res/responses.js';
-import { createPostService, deletePostService, getPostByIdService, getPostService, updatePostService } from '../service/post.service.js';
+import { createPostService, deletePostService, FindAllPosts, getPostByIdService, getPostService, updatePostService } from '../service/post.service.js';
 
 export const getPost = async (req, res) => {
     try {
@@ -11,6 +11,15 @@ export const getPost = async (req, res) => {
         return response(error.status || 500, error.massage || "Server Get Post Error", error, res)
     };
 };
+export const getAllPosts = async (req,res) => {
+    try {
+        const post = await FindAllPosts();
+        return response(200,"Success get all posts", post, res)
+    } catch (error) {
+        console.error("Get all post error: ", error);
+        return response(error.status || 500, error.massage || "Server Get All Post Error", error, res)
+    }
+}
 export const createPost = async (req, res) => {
     try {
         // console.log("REQ.USER:", req.user);
