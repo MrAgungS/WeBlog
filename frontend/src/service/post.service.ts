@@ -21,35 +21,35 @@ export interface Post {
     createdAt: string;
 }
 export const getAllPosts = async ()=> {
-    const res = await api.get("/api/posts/");
+    const res = await api.get("/posts/");
     return res.data
 };
 export const getPost = async (id: number)=> {
-    const res = await api.get(`/api/posts/id/${id}`);
+    const res = await api.get(`/posts/id/${id}`);
     return res.data
 };
 export const createPost = async (payload: CreatePostDTO)=> {
-    const res = await api.post("/api/posts/create", payload);
+    const res = await api.post("/posts/create", payload);
     return res.data
 };
 export const getPostBySlug = async (slug: string) => {
-    const res = await api.get(`/api/posts/slug/${slug}`);
+    const res = await api.get(`/posts/slug/${slug}`);
     return res.data
 };
 export const updatePost = async (id: number, payload: UpdatePostDTO) => {
-    const res = await api.put(`/api/posts/update/${id}`, payload);
+    const res = await api.put(`/posts/update/${id}`, payload);
     return res.data
 };
 export const deletePost = async (id: number)=> {
-    const res = await api.delete(`/api/posts/delete/id/${id}`);
+    const res = await api.delete(`/posts/delete/${id}`);
     return res.data
 };
 export const likePost = async (postId: number)=> {
-    const res = await api.post(`/api/posts/${postId}/like`);
+    const res = await api.post(`/posts/${postId}/like`);
     return res.data
 };
 export const unlikePost = async (postId: number) => {
-    const res = await api.delete(`/api/posts/${postId}/like`);
+    const res = await api.delete(`/posts/${postId}/like`);
     return res.data
 };
 

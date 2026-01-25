@@ -4,11 +4,16 @@ import { createPostService, deletePostService, FindAllPosts, getPostByIdService,
 export const getPost = async (req, res) => {
     try {
         const id = Number(req.params.id);
+        if (isNaN(id)) {
+            return response(400, "Invalid post ID", null, res);
+        }
         const post = await getPostByIdService(id);
         return response(200,"Success get post", post, res)
     } catch (error) {
         console.error("Get post Error: " , error);
-        return response(error.status || 500, error.massage || "Server Get Post Error", error, res)
+        const statusCode = error?.status || error?.statusCode || 500;
+        const message = error?.message || "Server Get Post Error";
+        return response(statusCode, message, null, res)
     };
 };
 export const getAllPosts = async (req,res) => {
@@ -17,7 +22,9 @@ export const getAllPosts = async (req,res) => {
         return response(200,"Success get all posts", post, res)
     } catch (error) {
         console.error("Get all post error: ", error);
-        return response(error.status || 500, error.massage || "Server Get All Post Error", error, res)
+        const statusCode = error?.status || error?.statusCode || 500;
+        const message = error?.message || "Server Get All Post Error";
+        return response(statusCode, message, null, res)
     }
 }
 export const createPost = async (req, res) => {
@@ -32,7 +39,9 @@ export const createPost = async (req, res) => {
         return response(201,"Success Create Post", post, res);
     } catch (error) {
         console.error("Create Error :" , error);
-        return response(error.status || 500, error.massage || "Server Create Error", error, res);
+        const statusCode = error?.status || error?.statusCode || 500;
+        const message = error?.message || "Server Create Error";
+        return response(statusCode, message, null, res);
     }
 }
 export const getPostBySLug = async (req, res) => {
@@ -42,27 +51,40 @@ export const getPostBySLug = async (req, res) => {
         return response(200,"Success get post by id", post, res);
     } catch (error) {
         console.error("Get post by id Error: " , error);
-        return response(error.status || 500, error.massage || "Server get post by id error ", error, res);
+        const statusCode = error?.status || error?.statusCode || 500;
+        const message = error?.message || "Server get post by id error";
+        return response(statusCode, message, null, res);
     }
 }
 export const updatePost = async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, content } = req.body;
-        const post = await updatePostService(Number(id), title, content);
+        const idNum = Number(id);
+        if (isNaN(idNum)) {
+            return response(400, "Invalid post ID", null, res);
+        }
+        const { title, content, status } = req.body;
+        const post = await updatePostService(idNum, title, content, status);
         return response(200, "Success update Post", post, res)
     } catch (error) {
         console.error("Update Post Error: " , error);
-        return response(error.status || 500, error.massage ||"Server Update post error", error, res)
+        const statusCode = error?.status || error?.statusCode || 500;
+        const message = error?.message || "Server Update post error";
+        return response(statusCode, message, null, res)
     }
 }
 export const deletePost = async (req, res) => {
     try {
         const id = Number(req.params.id);
+        if (isNaN(id)) {
+            return response(400, "Invalid post ID", null, res);
+        }
         const postDelete = await deletePostService(id);
         return response(200, "Success delete post", postDelete, res);
     } catch (error) {
         console.error("Delete Post Error: ", error);
-        return response(error.status || 500, error.massage ||"Server delete post error", error, res)
+        const statusCode = error?.status || error?.statusCode || 500;
+        const message = error?.message || "Server delete post error";
+        return response(statusCode, message, null, res)
     }
 }

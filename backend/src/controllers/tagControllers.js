@@ -19,9 +19,11 @@ export const createTag = async (req, res) => {
 export const getTag = async (req, res) => {
     try {
         const tags = await getTagService();
-        return response(201,"success get tags", tags, res)
+        return response(200,"success get tags", tags, res)
     } catch (error) {
         console.error("Get tags error: ", error);
-        return response(error.status || 500, error.massage || "Server get tags error ", null, res);
+        const statusCode = error?.status || error?.statusCode || 500;
+        const message = error?.message || "Server get tags error";
+        return response(statusCode, message, null, res);
     }
 };

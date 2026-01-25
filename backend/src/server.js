@@ -23,7 +23,9 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", authRoutes);
-app.use("/api/posts", postRoutes, likeRoutes, commentsRoutes);
+app.use("/api/posts", postRoutes);
+app.use("/api/posts", likeRoutes);
+app.use("/api/comments", commentsRoutes);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/tag", tagRoutes);
 
