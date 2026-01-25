@@ -17,7 +17,7 @@ export const loginRateLimiter = new RateLimiterMemory({
 
 export const registerRateLimiter = new RateLimiterMemory({
     storeClient: redis,
-    keyPrefix:'login',
+    keyPrefix:'register',
     points: 10,
     duration: 5
 })

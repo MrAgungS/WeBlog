@@ -5,45 +5,53 @@ import { generateAccessToken, generateRefreshToken, hashToken } from '../utils/j
 import { AppError } from '../errors/AppError.js';
 
 export const registerService = async ({name, email, password}) => {
-    // Check Validation
-    registerValidation({ name, email, password });
-    const existingUser = await prisma.user.findUnique({
-        where: { email }
-    });
-    if (existingUser) {
-        throw new AppError("Email has been registered", 409);
-    };
-    const hash = await bcrypt.hash(password, 9);
-    // create user
-    const user = await prisma.user.create({
-        data:{
-            name,email, password: hash,
-        },
-        select:{
-            id:true,
-            name:true,
-            email:true,
-            role:true,
+    try {
+        // Check Validation
+        registerValidation({ name, email, password });
+        const existingUser = await prisma.user.findUnique({
+            where: { email }
+        });
+        if (existingUser) {
+            throw new AppError("Email has been registered", 409);
+        };
+        const hash = await bcrypt.hash(password, 9);
+        // create user
+        const user = await prisma.user.create({
+            data:{
+                name,email, password: hash,
+            },
+            select:{
+                id:true,
+                name:true,
+                email:true,
+                role:true,
+            }
+        });
+        const accessToken = generateAccessToken(user);
+        const refreshToken = generateRefreshToken();
+            await prisma.refreshToken.create({
+            data:{
+                token: hashToken(refreshToken),
+                user_id: user.id,
+                expiresAt: new Date(Date.now() + 7 * 86400000)
+            }
+        });
+        return{
+            user:{
+                id: user.id,
+                name: user.name,
+                email: user.email
+            },
+            accessToken,
+            refreshToken
+        };
+    } catch (error) {
+        if (error instanceof AppError) {
+            throw error;
         }
-    });
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken();
-        await prisma.refreshToken.create({
-        data:{
-            token: hashToken(refreshToken),
-            user_id: user.id,
-            expiresAt: new Date(Date.now() + 7 * 86400000)
-        }
-    });
-    return{
-        user:{
-            id: user.id,
-            name: user.name,
-            email: user.email
-        },
-        accessToken,
-        refreshToken
-    };
+        console.error("Register Service Error:", error);
+        throw new AppError(error.message || "Failed to register user", 500);
+    }
 };
 export const loginService = async ({email, password}) => {
     // Cheack Email

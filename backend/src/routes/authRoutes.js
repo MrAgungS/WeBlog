@@ -6,8 +6,8 @@ import { loginRateLimitMiddleware, registerRateLimitMiddleware } from "../middle
 const router = express.Router();
 
 router.post("/register", registerRateLimitMiddleware, register);
-router.post("/login", authMiddlewere, loginRateLimitMiddleware, login);
+router.post("/login", loginRateLimitMiddleware, login);
 router.post("/refresh", refresh);
-router.post("/logout", logout);
+router.post("/logout", authMiddlewere, logout);
 
 export default router

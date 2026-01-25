@@ -4,6 +4,9 @@ import { likePostService, unlikePostService } from "../service/like.service.js";
 export const likePost = async (req, res) => {
     try {
         const postId = Number(req.params.id);
+        if (isNaN(postId)) {
+            return response(400, "Invalid post ID", null, res);
+        }  
         const userId = req.user.id;
         const result = await likePostService(postId, userId);
         return response(201, "Post liked", result, res);
@@ -19,8 +22,11 @@ export const likePost = async (req, res) => {
 export const unlikePost = async (req, res) => {
     try {
         const postId = Number(req.params.id);
+        
+        if (isNaN(postId)) {
+            return response(400, "Invalid post ID", null, res);
+        }
         const userId = req.user.id;
-
         const result = await unlikePostService(postId, userId);
         return response(200, "Post unliked", result, res);
     } catch (error) {

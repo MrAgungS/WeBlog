@@ -1,14 +1,59 @@
 import api from "@/lib/axiosInstance"
 
-export const register = async (payload: string) => {
-    return api.post("/api/auth/register", payload)
+export interface LoginDTO{
+  email: string,
+  password: string
 }
-export const login = async (payload: string) => {
-    return api.post("/api/auth/login", payload)
+export interface RegisterDTO {
+  name: string;
+  email: string;
+  password: string;
 }
-export const refresh = async (payload: string) => {
-    return api.post("/api/auth/refresh", payload)
-}
-export const logout = async (payload: string) => {
-    return api.post("/api/auth/logout", payload)
-}
+// Helper function to store tokens
+const storeTokens = (accessToken: string, refreshToken?: string) => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('accessToken', accessToken);
+    if (refreshToken) {
+      localStorage.setItem('refreshToken', refreshToken);
+    }
+  }
+};
+// Helper function to clear tokens
+export const clearTokens = () => {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+  }
+};
+export const register = async (payload: RegisterDTO) => {
+  const res = await api.post("/auth/register", payload);
+  const { accessToken, refreshToken } = res.data.data || res.data;
+  if (accessToken) {
+    storeTokens(accessToken, refreshToken);
+  }
+  return res.data;
+};
+export const login = async (payload: LoginDTO) => {
+  const res = await api.post("/auth/login", payload);
+  const { accessToken } = res.data.data || res.data;
+  if (accessToken) {
+    storeTokens(accessToken);
+  }
+  return res.data;
+};
+export const refresh = async () => {
+  const res = await api.post("/auth/refresh");
+  const { accessToken } = res.data.data || res.data;
+  if (accessToken) {
+    storeTokens(accessToken);
+  }
+  return res.data;
+};
+export const logout = async () => {
+  try {
+    const res = await api.post("/auth/logout");
+    return res.data;
+  } finally {
+    clearTokens();
+  }
+};

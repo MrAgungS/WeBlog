@@ -4,8 +4,8 @@ interface CreateCategoryDTO {
     name: string;
 }
 export const getCategories = async () => {
-    return api.get(`/api/categories/get/`)
+    return api.get(`/categories/get/`)
 }
 export const createCategories = async (payload:CreateCategoryDTO) => {
-    return api.post(`/api/categories/create/`, payload)
+    return api.post(`/categories/create/`, payload)
 }
