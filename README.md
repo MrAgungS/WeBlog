@@ -1,7 +1,8 @@
 # IMPORTANT
+```
 The main focus is backend architecture and API design.
 Frontend design is not the priority and is implemented as best as possible to support testing and usage of the backend.
-
+```
 # WeBlog
 WeBlog is a project that was originally inspired by blog websites out there, and I tried to create a similar idea in my own way.
 
